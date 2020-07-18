@@ -30,7 +30,7 @@ Library used:
 #define PIN_DHT 22
 
 #define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
-#define TIME_TO_SLEEP  (30)        /* Time ESP32 will go to sleep (in seconds) */
+#define TIME_TO_SLEEP  (3*60)        /* Time ESP32 will go to sleep (in seconds) */
 
 #define THINGSBOARD_TOKEN   "bJAnSmrowVEKYTg06MXE"
 // ThingsBoard server instance.
@@ -106,11 +106,15 @@ void setup() {
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  digitalWrite(LED_BUILTIN, LOW);
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
     Serial.println("Connection Failed! Rebooting...");
-    delay(5000);
+    delay(500);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(4500);
     ESP.restart();
   }
+  digitalWrite(LED_BUILTIN, HIGH);
   NtpInit();
   Serial.print("System connected with IP Address: ");
   Serial.println(WiFi.localIP());
@@ -127,17 +131,15 @@ void setup() {
   esp_deep_sleep_start();
 }
 
-int nCount =0;
 void loop() {
-  // put your main code here, to run repeatedly:
-  // delay(dht.getMinimumSamplingPeriod());
-  if (nCount++==30000)
-  {
-    nCount = 0;
-    ReadSensor();
-  }
-  tb.loop();
-  delay(1);
+  // static int nCount =0;
+  // if (nCount++==30000)
+  // {
+  //   nCount = 0;
+  //   ReadSensor();
+  // }
+  // tb.loop();
+  // delay(1);
 }
 
 void ReadSensor()
